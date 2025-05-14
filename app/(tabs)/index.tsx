@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const planets = [
   { name: 'Mercury', image: require('../../assets/planets/mercury.jpg') },
@@ -13,11 +14,13 @@ const planets = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
       key={planet.name}
       style={styles.button}
-      onPress={() => Alert.alert('Планета', planet.name)}
+      onPress={() => router.push(`/planet/${planet.name}`)}
     >
       <Image source={planet.image} style={styles.image} />
       <Text style={styles.buttonText}>{planet.name}</Text>
