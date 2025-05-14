@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const planets = [
@@ -15,6 +15,11 @@ const planets = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
@@ -28,7 +33,12 @@ export default function HomeScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme === 'light' ? '#f0f0f0' : '#111' }]}>
+      <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
+        <Text style={styles.themeText}>
+          Switch to {theme === 'light' ? 'Dark' : 'Light'} Theme
+        </Text>
+      </TouchableOpacity>
       {[0, 1, 2].map((row) => (
         <View key={row} style={styles.row}>
           {planets.slice(row * 3, row * 3 + 3).map(renderPlanetButton)}
@@ -44,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 20,
     padding: 20,
-    backgroundColor: '#d3d3d3',
   },
   row: {
     flexDirection: 'row',
@@ -71,5 +80,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 12,
+  },
+  themeToggle: {
+    alignSelf: 'center',
+    marginBottom: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#007AFF',
+  },
+  themeText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
