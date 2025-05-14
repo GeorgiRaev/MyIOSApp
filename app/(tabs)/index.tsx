@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const planets = [
   { name: 'Mercury', image: require('../../assets/planets/mercury.jpg') },
@@ -15,11 +16,7 @@ const planets = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const { theme, toggleTheme } = useTheme();
 
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
