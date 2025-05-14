@@ -24,6 +24,11 @@ export default function PlanetDetails() {
         {'\n'}
         Declination: {planet.coordinates.declination}
       </Text>
+
+      <Text style={styles.sectionTitle}>Facts:</Text>
+      {planet.facts?.map((fact, index) => (
+        <Text key={index} style={styles.factItem}>• {fact}</Text>
+      ))}
     </ScrollView>
   );
 }
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
     color: '#333',
   },
   coordinates: {
@@ -67,5 +72,20 @@ const styles = StyleSheet.create({
     color: '#555',
     textAlign: 'center',
     fontStyle: 'italic',
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 10,
+    color: '#222',
+    alignSelf: 'flex-start',
+  },
+  factItem: {
+    fontSize: 16,
+    color: '#444',
+    marginBottom: 6,
+    alignSelf: 'flex-start',
   },
 });
