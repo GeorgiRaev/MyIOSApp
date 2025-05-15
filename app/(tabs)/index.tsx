@@ -16,7 +16,7 @@ const planets = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
@@ -39,6 +39,10 @@ export default function HomeScreen() {
 
       <TouchableOpacity style={styles.quizButton} onPress={() => router.push('/quiz')}>
         <Text style={styles.quizText}>🧠 Test Your Knowledge</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
+        <Text style={styles.themeText}>🌗 Switch Theme</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -86,6 +90,17 @@ const styles = StyleSheet.create({
   quizText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  themeToggle: {
+    marginTop: 15,
+    backgroundColor: '#444',
+    padding: 10,
+    borderRadius: 8,
+  },
+  themeText: {
+    color: '#fff',
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
