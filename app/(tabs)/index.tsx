@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const planets = [
@@ -17,6 +18,7 @@ const planets = [
 export default function HomeScreen() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
 
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
@@ -43,6 +45,10 @@ export default function HomeScreen() {
 
       <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
         <Text style={styles.themeText}>🌗 Switch Theme</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.langButton} onPress={toggleLanguage}>
+        <Text style={styles.langText}>🌐 {language.toUpperCase()}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -102,5 +108,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  langButton: {
+    marginTop: 10,
+    backgroundColor: '#ccc',
+    padding: 10,
+    borderRadius: 8,
+  },
+  langText: {
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

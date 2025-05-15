@@ -2,6 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
 import React, { useEffect } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { planets } from '../../lib/planets';
 
@@ -11,20 +12,30 @@ export default function PlanetDetails() {
     (p) => p.name.toLowerCase() === String(name).toLowerCase()
   );
   const { theme } = useTheme();
+  const { language } = useLanguage();
 
-  useEffect(() => {
-    if (!planet?.description) return;
+  const getDescription = () => {
+    return planet?.description?.[language] || planet?.description?.en || '';
+  };
+
+  const speakDescription = () => {
+    const text = getDescription();
+    const voiceLang = language === 'bg' ? 'bg-BG' : 'en-US';
 
     Speech.stop();
-    Speech.speak(planet.description, {
+    Speech.speak(text, {
       rate: 0.9,
-      language: 'en',
+      language: voiceLang,
     });
+  };
+
+  useEffect(() => {
+    speakDescription();
 
     return () => {
-      Speech.stop();
+      Speech.stop(); // ❗️ важен: синхронно спиране
     };
-  }, [planet]);
+  }, [planet, language]);
 
   if (!planet) {
     return (
@@ -34,13 +45,7 @@ export default function PlanetDetails() {
     );
   }
 
-  const speakAgain = () => {
-    Speech.stop();
-    Speech.speak(planet.description, {
-      rate: 0.9,
-      language: 'en',
-    });
-  };
+  const description = getDescription();
 
   return (
     <ScrollView
@@ -49,58 +54,36 @@ export default function PlanetDetails() {
         { backgroundColor: theme === 'light' ? '#f9f9f9' : '#000' },
       ]}
     >
-      <Text
-        style={[styles.title, { color: theme === 'light' ? '#000' : '#fff' }]}
-      >
+      <Text style={[styles.title, { color: theme === 'light' ? '#000' : '#fff' }]}>
         {planet.name}
       </Text>
 
-      <Image
-        source={planet.image}
-        style={styles.image}
-        resizeMode="contain"
-      />
+      <Image source={planet.image} style={styles.image} resizeMode="contain" />
 
-      <Text
-        style={[
-          styles.description,
-          { color: theme === 'light' ? '#333' : '#ccc' },
-        ]}
-      >
-        {planet.description}
+      <Text style={[styles.description, { color: theme === 'light' ? '#333' : '#ccc' }]}>
+        {description}
       </Text>
 
-      <TouchableOpacity style={styles.speakButton} onPress={speakAgain}>
-        <Text style={styles.speakText}>🔊 Прочети отново</Text>
+      <TouchableOpacity style={styles.speakButton} onPress={speakDescription}>
+        <Text style={styles.speakText}>
+          🔊 {language === 'bg' ? 'Прочети отново' : 'Speak again'}
+        </Text>
       </TouchableOpacity>
 
-      <Text
-        style={[
-          styles.coordinates,
-          { color: theme === 'light' ? '#555' : '#aaa' },
-        ]}
-      >
+      <Text style={[styles.coordinates, { color: theme === 'light' ? '#555' : '#aaa' }]}>
         Right Ascension: {planet.coordinates.rightAscension}
         {'\n'}
         Declination: {planet.coordinates.declination}
       </Text>
 
-      <Text
-        style={[
-          styles.sectionTitle,
-          { color: theme === 'light' ? '#222' : '#fff' },
-        ]}
-      >
-        Facts:
+      <Text style={[styles.sectionTitle, { color: theme === 'light' ? '#222' : '#fff' }]}>
+        {language === 'bg' ? 'Факти' : 'Facts'}:
       </Text>
 
       {planet.facts?.map((fact, index) => (
         <Text
           key={index}
-          style={[
-            styles.factItem,
-            { color: theme === 'light' ? '#444' : '#ccc' },
-          ]}
+          style={[styles.factItem, { color: theme === 'light' ? '#444' : '#ccc' }]}
         >
           • {fact}
         </Text>
