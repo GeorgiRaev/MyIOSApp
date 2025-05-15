@@ -1,12 +1,34 @@
 import { useLocalSearchParams } from 'expo-router';
+import * as Speech from 'expo-speech';
+import React, { useEffect } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { planets } from '../../lib/planets';
 
 export default function PlanetDetails() {
   const { name } = useLocalSearchParams();
-  const planet = planets.find(p => p.name.toLowerCase() === String(name).toLowerCase());
+  const planet = planets.find(
+    (p) => p.name.toLowerCase() === String(name).toLowerCase()
+  );
   const { theme } = useTheme();
+
+  useEffect(() => {
+    if (!planet?.description) return;
+
+    const speak = () => {
+      Speech.stop();
+      Speech.speak(planet!.description, {
+        rate: 0.9,
+        language: 'en',
+      });
+    };
+
+    speak();
+
+    return () => {
+      Speech.stop();
+    };
+  }, [planet]);
 
   if (!planet) {
     return (
@@ -17,18 +39,56 @@ export default function PlanetDetails() {
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme === 'light' ? '#f9f9f9' : '#000' }]}>
-      <Text style={[styles.title, { color: theme === 'light' ? '#000' : '#fff' }]}>{planet.name}</Text>
-      <Image source={planet.image} style={styles.image} resizeMode="contain" />
-      <Text style={[styles.description, { color: theme === 'light' ? '#333' : '#ccc' }]}>{planet.description}</Text>
-      <Text style={[styles.coordinates, { color: theme === 'light' ? '#555' : '#aaa' }]}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme === 'light' ? '#f9f9f9' : '#000' },
+      ]}
+    >
+      <Text
+        style={[styles.title, { color: theme === 'light' ? '#000' : '#fff' }]}
+      >
+        {planet.name}
+      </Text>
+      <Image
+        source={planet.image}
+        style={styles.image}
+        resizeMode="contain"
+      />
+      <Text
+        style={[
+          styles.description,
+          { color: theme === 'light' ? '#333' : '#ccc' },
+        ]}
+      >
+        {planet.description}
+      </Text>
+      <Text
+        style={[
+          styles.coordinates,
+          { color: theme === 'light' ? '#555' : '#aaa' },
+        ]}
+      >
         Right Ascension: {planet.coordinates.rightAscension}
         {'\n'}
         Declination: {planet.coordinates.declination}
       </Text>
-      <Text style={[styles.sectionTitle, { color: theme === 'light' ? '#222' : '#fff' }]}>Facts:</Text>
+      <Text
+        style={[
+          styles.sectionTitle,
+          { color: theme === 'light' ? '#222' : '#fff' },
+        ]}
+      >
+        Facts:
+      </Text>
       {planet.facts?.map((fact, index) => (
-        <Text key={index} style={[styles.factItem, { color: theme === 'light' ? '#444' : '#ccc' }]}>
+        <Text
+          key={index}
+          style={[
+            styles.factItem,
+            { color: theme === 'light' ? '#444' : '#ccc' },
+          ]}
+        >
           • {fact}
         </Text>
       ))}
