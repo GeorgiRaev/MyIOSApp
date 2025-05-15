@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
 import React, { useEffect } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { planets } from '../../lib/planets';
 
@@ -15,15 +15,11 @@ export default function PlanetDetails() {
   useEffect(() => {
     if (!planet?.description) return;
 
-    const speak = () => {
-      Speech.stop();
-      Speech.speak(planet!.description, {
-        rate: 0.9,
-        language: 'en',
-      });
-    };
-
-    speak();
+    Speech.stop();
+    Speech.speak(planet.description, {
+      rate: 0.9,
+      language: 'en',
+    });
 
     return () => {
       Speech.stop();
@@ -38,6 +34,14 @@ export default function PlanetDetails() {
     );
   }
 
+  const speakAgain = () => {
+    Speech.stop();
+    Speech.speak(planet.description, {
+      rate: 0.9,
+      language: 'en',
+    });
+  };
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -50,11 +54,13 @@ export default function PlanetDetails() {
       >
         {planet.name}
       </Text>
+
       <Image
         source={planet.image}
         style={styles.image}
         resizeMode="contain"
       />
+
       <Text
         style={[
           styles.description,
@@ -63,6 +69,11 @@ export default function PlanetDetails() {
       >
         {planet.description}
       </Text>
+
+      <TouchableOpacity style={styles.speakButton} onPress={speakAgain}>
+        <Text style={styles.speakText}>🔊 Прочети отново</Text>
+      </TouchableOpacity>
+
       <Text
         style={[
           styles.coordinates,
@@ -73,6 +84,7 @@ export default function PlanetDetails() {
         {'\n'}
         Declination: {planet.coordinates.declination}
       </Text>
+
       <Text
         style={[
           styles.sectionTitle,
@@ -81,6 +93,7 @@ export default function PlanetDetails() {
       >
         Facts:
       </Text>
+
       {planet.facts?.map((fact, index) => (
         <Text
           key={index}
@@ -126,7 +139,19 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
+  },
+  speakButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  speakText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   coordinates: {
     fontSize: 16,
