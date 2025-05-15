@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const planets = [
@@ -16,7 +16,7 @@ const planets = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const renderPlanetButton = (planet: typeof planets[number]) => (
     <TouchableOpacity
@@ -30,32 +30,30 @@ export default function HomeScreen() {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme === 'light' ? '#f0f0f0' : '#111' }]}>
-      <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
-        <Text style={styles.themeText}>
-          Switch to {theme === 'light' ? 'Dark' : 'Light'} Theme
-        </Text>
-      </TouchableOpacity>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme === 'light' ? '#f0f0f0' : '#111' }]}>
       {[0, 1, 2].map((row) => (
         <View key={row} style={styles.row}>
           {planets.slice(row * 3, row * 3 + 3).map(renderPlanetButton)}
         </View>
       ))}
-    </View>
+
+      <TouchableOpacity style={styles.quizButton} onPress={() => router.push('/quiz')}>
+        <Text style={styles.quizText}>🧠 Test Your Knowledge</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 20,
     padding: 20,
+    gap: 20,
+    alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    gap: 10,
+    width: '100%',
   },
   button: {
     alignItems: 'center',
@@ -65,6 +63,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 120,
     justifyContent: 'center',
+    margin: 5,
   },
   image: {
     width: 60,
@@ -78,16 +77,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
   },
-  themeToggle: {
-    alignSelf: 'center',
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 10,
+  quizButton: {
+    marginTop: 30,
     backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 10,
   },
-  themeText: {
+  quizText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
