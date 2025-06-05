@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
+// Fisher-Yates shuffle algorithm
+const shuffleArray = (array: any[]) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const questions = [
   {
     text: 'Which planet has the most visible rings?',
@@ -30,7 +40,10 @@ export default function QuizScreen() {
     return questions[randomIndex];
   };
 
-  const [question, setQuestion] = useState(getRandomQuestion());
+  const [question, setQuestion] = useState({
+    ...getRandomQuestion(),
+    shuffledOptions: shuffleArray(getRandomQuestion().options)
+  });
   const [selected, setSelected] = useState<string | null>(null);
 
   const handleAnswer = (option: string) => {
@@ -41,15 +54,19 @@ export default function QuizScreen() {
 
   const refreshQuiz = () => {
     setSelected(null);
-    setQuestion(getRandomQuestion());
+    const randomQuestion = getRandomQuestion();
+    setQuestion({
+      ...randomQuestion,
+      shuffledOptions: shuffleArray(randomQuestion.options)
+    });
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>🧠 Test Your Knowledge</Text>
+      <Text style={styles.title}> Test Your Knowledge</Text>
       <Text style={styles.question}>{question.text}</Text>
 
-      {question.options.map((option) => (
+      {question.shuffledOptions.map((option) => (
         <TouchableOpacity
           key={option}
           style={[
